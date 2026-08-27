@@ -1,0 +1,48 @@
+package com.sele906.api.common.controller;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClient;
+import tools.jackson.databind.JsonNode;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api")
+public class HealthController {
+
+    @Value("${LIB_API_KEY}")
+    String authKey;
+
+    @GetMapping("/health")
+    public ResponseEntity<Map<String, String>> getHealth() {
+        return ResponseEntity.ok(
+                Map.of("status", "ok")
+        );
+    }
+
+    @GetMapping("/connection")
+    public ResponseEntity<JsonNode> getConnection() {
+
+        RestClient restClient = RestClient.builder()
+                .baseUrl("https://data4library.kr")
+                .build();
+
+        JsonNode response = restClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/api/libSrch")
+                        .queryParam("authKey", authKey)
+                        .queryParam("pageNo", 1)
+                        .queryParam("pageSize", 2)
+                        .queryParam("format", "json")
+                        .build())
+                .retrieve()
+                .body(JsonNode.class);
+
+        return ResponseEntity.ok(response);
+    }
+}
