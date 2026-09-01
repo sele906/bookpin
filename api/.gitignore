@@ -37,6 +37,6 @@ out/
 .vscode/
 
 ### env ###
-src/main/resources/.env
+.env
 .env.*
 !.env.example
