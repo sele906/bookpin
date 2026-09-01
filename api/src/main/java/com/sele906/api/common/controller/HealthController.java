@@ -62,17 +62,4 @@ public class HealthController {
 
         return ResponseEntity.ok(response);
     }
-
-    @Value("${spring.datasource.username}")
-    private String username;
-
-    @Value("${spring.datasource.password}")
-    private String password;
-
-    @PostConstruct
-    public void checkEnv() {
-        System.out.println("DB username = " + username);
-        System.out.println("ENV password length = "
-                + System.getenv("DB_PASSWORD").length());
-    }
 }

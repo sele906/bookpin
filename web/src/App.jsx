@@ -12,7 +12,16 @@ function App() {
     .catch(setError)
   }, [])
 
-  if (error) return <div>연결 실패</div>
+  if (error) {
+    console.error(error)
+
+    return (
+      <div>
+        연결 실패
+        <pre>{String(error)}</pre>
+      </div>
+    )
+  }
   if (!libs) return <div>불러오는 중...</div>
 
   return (
