@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sele906.api.library.mapper.LibraryMapper">
+
+    <select id="findOne"
+            resultType="com.sele906.api.library.domain.Library">
+        SELECT *
+        FROM library
+        LIMIT 1
+    </select>
+
+    <insert id="insertLibrary">
+        INSERT INTO library (
+        lib_code,
+        name,
+        address,
+        tel,
+        fax,
+        homepage,
+        latitude,
+        longitude,
+        closed_days,
+        operating_time,
+        book_count,
+        location
+        )
+        VALUES (
+        #{libCode},
+        #{name},
+        #{address},
+        #{tel},
+        #{fax},
+        #{homepage},
+        #{latitude},
+        #{longitude},
+        #{closedDays},
+        #{operatingTime},
+        #{bookCount},
+
+        <choose>
+            <when test="latitude != null and longitude != null">
+                ST_SetSRID(
+                ST_MakePoint(#{longitude}, #{latitude}),
+                4326
+                )::geography
+            </when>
+            <otherwise>
+                NULL
+            </otherwise>
+        </choose>
+        )
+
+        ON CONFLICT (lib_code)
+        DO UPDATE SET
+        name = EXCLUDED.name,
+        address = EXCLUDED.address,
+        tel = EXCLUDED.tel,
+        fax = EXCLUDED.fax,
+        homepage = EXCLUDED.homepage,
+        latitude = EXCLUDED.latitude,
+        longitude = EXCLUDED.longitude,
+        location = EXCLUDED.location,
+        closed_days = EXCLUDED.closed_days,
+        operating_time = EXCLUDED.operating_time,
+        book_count = EXCLUDED.book_count,
+        updated_at = NOW()
+    </insert>
+
+</mapper>
